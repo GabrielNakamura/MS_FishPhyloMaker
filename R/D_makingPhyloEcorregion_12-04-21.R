@@ -1,6 +1,5 @@
 
 # read data and libraries ---------------------------------------------------------------
-devtools::install_github("GabrielNakamura/FishPhyloMaker", ref = "main", force = TRUE)
 library(FishPhyloMaker)
 raw_data <- read.csv(here::here("data", "osm-raw-data.csv"), sep=";")
 data <- raw_data[-which(duplicated(raw_data$SpecCode)==TRUE),]
@@ -15,131 +14,53 @@ names(list_ecoregions) <- ecoregion
 species_list_ecoregions <- lapply(list_ecoregions, function(x) x$Genus.species)
 names(species_list_ecoregions) <- ecoregion
 
-taxa_afrotropics <- FishTaxaMaker(data = species_list_ecoregions$Afrotropic)
-res_afrotropics <- FishPhyloMaker(data = taxa_afrotropics, return.insertions = TRUE)
-Nematabramis
-Cnesterodon
-Cyprinidae
-Heterochromis
-Nematabramis Acapoeta
-Heterochromis
-Petrocephalus
-Distichodontidae
-Heterochromis
-Cichlidae
-Caprichromis
-Distichodontidae
-Channidae
-Hemistichodus
-Redigobius
-Poeciliidae
-Horabagrus
-Cichlidae
-Corematodus
-Amphiliidae
-
-Pseudopimelodidae
-Siluriformes
-Hiodontidae
-Gonorynchiformes
-saveRDS(object = res_afrotropics, file = here::here("phylo_afrotropics.rds"))
+taxa_afrotropics <- FishPhyloMaker::FishTaxaMaker(data = species_list_ecoregions$Afrotropic, allow.manual.insert = TRUE)
+taxa_afrotropics$Taxon_data_FishPhyloMaker[, "o"][which(taxa_afrotropics$Taxon_data_FishPhyloMaker$f == "Cichlidae")] <- "Cichliformes"
+res_afrotropics <- FishPhyloMaker(data = taxa_afrotropics$Taxon_data_FishPhyloMaker, insert.base.node = TRUE, return.insertions = TRUE)
+saveRDS(object = res_afrotropics, file = here::here("output", "phylo_afrotropics.rds"))
 
 
 taxa_australasia <- FishTaxaMaker(data = species_list_ecoregions$Australasia)
-res_australasia <- FishPhyloMaker(data = taxa_australasia, return.insertions = TRUE)
-Tandanus
-Pandaka
-Soleidae
-Pseudogobiopsis Synechogobius
-Glyptauchen
-
-Chirocentridae
-Clupeiformes
-Clupeiformes
-saveRDS(object = res_australasia, file = here::here("phylo_australasia.rds"))
+taxa_australasia$Taxon_data_FishPhyloMaker[, "o"][which(taxa_australasia$Taxon_data_FishPhyloMaker$o == "Scorpaeniformes")] <- "Perciformes"
+res_australasia <- FishPhyloMaker(data = taxa_australasia$Taxon_data_FishPhyloMaker, 
+                                  return.insertions = TRUE, 
+                                  insert.base.node = TRUE)
+saveRDS(object = res_australasia, file = here::here("output", "phylo_australasia.rds"))
 
 
 taxa_indomalay <- FishTaxaMaker(data = species_list_ecoregions$`Indo-Malay`)
-res_indomalay <- FishPhyloMaker(data = taxa_indomalay, return.insertions = TRUE)
-Soleidae
-Sinogastromyzon
-Cyprinidae
-Genyonemus Seriphus
-Soleidae
-Parambassis
-Syngnathidae
-Pseudogobiopsis
-Neosilurus
-Platyallabes
-Doryrhamphus Microphis
-Siluridae
-Cyprinidae
-Pseudogobiopsis
-Phallostethidae
-Schilbeidae
-Aspidoparia
-Sillaginodes
-Siluridae
-Sagamia
-Cyprinidae
-
-Clupeiformes
-Chirocentridae
-Denticipitidae Chirocentridae
-Xiphiidae
-Perciformes
-Clupeiformes
-saveRDS(object = res_indomalay, file = here::here("phylo_indomalay.rds"))
+res_indomalay <- FishPhyloMaker(data = taxa_indomalay$Taxon_data_FishPhyloMaker, 
+                                return.insertions = TRUE, 
+                                insert.base.node = TRUE)
+saveRDS(object = res_indomalay, file = here::here("output", "phylo_indomalay.rds"))
 
 
 taxa_neartic <- FishTaxaMaker(data = species_list_ecoregions$Nearctic)
-res_neartic <- FishPhyloMaker(data = taxa_neartic, return.insertions = TRUE)
-saveRDS(object = res_neartic, file = here::here("phylo_neartic.rds"))
+taxa_neartic$Taxon_data_FishPhyloMaker[which(taxa_neartic$Taxon_data_FishPhyloMaker$o == "Scorpaeniformes"), "o"] <- "Perciformes"
+taxa_neartic$Taxon_data_FishPhyloMaker[which(taxa_neartic$Taxon_data_FishPhyloMaker$f == "Cichlidae"), "o"] <- "Cichliformes"
+res_neartic <- FishPhyloMaker(data = taxa_neartic$Taxon_data_FishPhyloMaker, return.insertions = TRUE, insert.base.node = TRUE)
+saveRDS(object = res_neartic, file = here::here("output", "phylo_neartic.rds"))
 
 taxa_neotropic <- FishTaxaMaker(data = species_list_ecoregions$Neotropic)
-res_neotropic <- FishPhyloMaker(data = taxa_neotropic, return.insertions = TRUE)
-Schizodon
-Paravandellia
-Ctenoluciidae
-Compsura Serrapinnus
-Curimatidae
-Gymnotidae
-Xenodexia
-Lamontichthys
-Characidae
-Lamontichthys Fonchiiichthys
-Anostomus
-Anostomus
-Plagioscion
-Trichomycteridae
-Lophiosilurus
-Characidae
-Fluviphylax
-Trichomycteridae
-Pinguipedidae
-Anostomidae
-Physopyxis
-Hoplocharax
-Anostomidae
-Monopterus
-Auchenipteridae
+taxa_neotropic$Taxon_data_FishPhyloMaker[which(taxa_neotropic$Taxon_data_FishPhyloMaker$f == "Cichlidae"), "o"] <- "Cichliformes"
+res_neotropic <- FishPhyloMaker(data = taxa_neotropic$Taxon_data_FishPhyloMaker, 
+                                return.insertions = TRUE, 
+                                insert.base.node = TRUE)
 saveRDS(object = res_neotropic, file = here::here("phylo_neotropic.rds"))
 
 taxa_oceania <- FishTaxaMaker(data = species_list_ecoregions$Oceania)
-res_oceania <- FishPhyloMaker(data = taxa_oceania, return.insertions = TRUE)
+res_oceania <- FishPhyloMaker(data = taxa_oceania$Taxon_data_FishPhyloMaker, 
+                              return.insertions = TRUE, 
+                              insert.base.node = TRUE)
 saveRDS(res_oceania, file = here::here("phylo_oceania.rds"))
 
 taxa_paleartic <- FishTaxaMaker(data = species_list_ecoregions$Palearctic)
-res_paleartic <- FishPhyloMaker(data = taxa_paleartic, return.insertions = TRUE)
-Cabdio
-Securicula
-Gobiidae
-Aspidoparia
-
-Clupeiformes
+taxa_paleartic$Taxon_data_FishPhyloMaker[which(taxa_paleartic$Taxon_data_FishPhyloMaker$f == "Cichlidae"), "o"] <- "Cichliformes"
+taxa_paleartic$Taxon_data_FishPhyloMaker[which(taxa_paleartic$Taxon_data_FishPhyloMaker$o == "Scorpaeniformes"), "o"] <- "Perciformes"
+res_paleartic <- FishPhyloMaker(data = taxa_paleartic$Taxon_data_FishPhyloMaker, 
+                                return.insertions = TRUE, 
+                                insert.base.node = TRUE)
 saveRDS(res_paleartic, file = here::here("phylo_paleartic.rds"))
-
-
 
 # calculating PD ----------------------------------------------------------
 
