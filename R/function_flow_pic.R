@@ -6,6 +6,7 @@ library(geiger)
 library(ggtree)
 library(ggimage)
 library(cowplot)
+library(viridis)
 
 ## TREE gnerated by the PhyloFishMaker function
 tree.full <- ape::read.tree(here::here("data", "spp_example.txt"))
@@ -51,13 +52,13 @@ tree.a$tip.label <- gsub("_", " ", tree.a$tip.label)
 
 # plot for the complete tree
 plot.a <- ggtree(tree.a) %<+% phylopic_info + 
-  geom_tiplab(size = 2.5) + labs(tag = "A") +
+  geom_tiplab(size = 3) + labs(title = "Backbone tree") +
   theme(legend.position = c(0,1)) +
   geom_nodelab(aes(image = phylopic), geom = "phylopic",
-               alpha = 1, color = 'steelblue', size = .08) +
-  xlim(0, 300) + geom_treescale(x = 0, width = 20, fontsize = 3.5, offset = .15)
+               color = 'gray40', size = .1) +
+  xlim(0, 370) + geom_treescale(x = 0, width = 20, fontsize = 3.5, offset = .15)
 
-# iniciate the insertion procedure:
+# initiate the insertion procedure:
 # first round: congeneric
 tree.insert <- add.species.to.genus(tree = tree.full, species = "Gymnotus_sp1")
 
@@ -67,12 +68,10 @@ tree.b$tip.label <- gsub("_", " ", tree.b$tip.label)
 plot.b <- ggtree(tree.b, aes(color = group, linetype = group))  +
   scale_color_manual(values = c("black", "#33CCCC"), breaks = "CG") +
   scale_linetype_manual(values = c("solid", "dashed"), breaks = "CG") +
-  labs(colour = "Insertion type", linetype = "Insertion type", tag = "B") +
-  geom_tiplab(size = 2.5, show.legend = FALSE) + xlim(0, 300) +
-  theme(legend.position = c(0, 1), 
-        legend.justification = c(0, 1),
-        legend.title = element_text(size = 6),
-        legend.text = element_text(size = 6))
+  labs(colour = "Insertion type", linetype = "Insertion type", 
+       title = "(i) Congeneric insertion") +
+  geom_tiplab(size = 3, show.legend = FALSE) + xlim(0, 370) +
+  theme(legend.position = "none")
 
 
 # second round - option 1: add into family node, as polytomy
@@ -80,19 +79,17 @@ tree.insert1<- bind.tip(tree.insert, "Rineloricaria_sp1",
                         where = fastMRCA(tree.insert,"Loricaria_luciae", "Curculionichthys_insperatus"), 
                         position = 0)
 
-tree.c1 <- groupOTU(tree.insert1, insertions.types)
-tree.c1$tip.label <- gsub("_", " ", tree.c1$tip.label)
+tree.op3 <- groupOTU(tree.insert1, insertions.types)
+tree.op3$tip.label <- gsub("_", " ", tree.op3$tip.label)
 
-plot.c1 <- ggtree(tree.c1, aes(color = group, linetype = group))  +
+plot.op3 <- ggtree(tree.op3, aes(color = group, linetype = group))  +
   scale_color_manual(values = c("black","black", "#33CCCC"), breaks = c("CG", "FN")) +
   scale_linetype_manual(values = c("solid", "dashed", "dashed"), breaks = c("CG", "FN")) +
-  labs(colour = "Insertion type", linetype = "Insertion type", tag = "C1") +
-  geom_tiplab(size = 2.5, show.legend = F) + 
-  xlim(0, 300) +
-  theme(legend.position = c(0, 1), 
-        legend.justification = c(0, 1),
-        legend.title = element_text(size = 6),
-        legend.text = element_text(size = 6))
+  labs(colour = "Insertion type", linetype = "Insertion type", 
+       title = "(ii) Family-level insertions", subtitle = "Option 3 - Family node") +
+  geom_tiplab(size = 3, show.legend = F) + 
+  xlim(0, 370) +
+  theme(legend.position = "none")
 
 
 # Second round - option 2: specifying a relationship with some genus
@@ -105,21 +102,20 @@ posit.genus <- tree.insert1$edge.length[sapply(pos.genus, function(x, y)
 tree.insert2 <- bind.tip(tree.insert1, "Phenacorhamdia_sp1",
                          where = pos.genus, position = posit.genus/2) #
 
-tree.c2 <- groupOTU(tree.insert2, insertions.types)
-tree.c2$tip.label <- gsub("_", " ", tree.c2$tip.label)
+tree.op1 <- groupOTU(tree.insert2, insertions.types)
+tree.op1$tip.label <- gsub("_", " ", tree.op1$tip.label)
 
-plot.c2 <- ggtree(tree.c2, aes(color = group, linetype = group))  +
+plot.op1 <- ggtree(tree.op1, aes(color = group, linetype = group))  +
   scale_color_manual(values = c("black", "black", "black", "#33CCCC"), 
                      breaks = c ("CG", "FN", "NG")) +
   scale_linetype_manual(values = c("solid", "dashed", "dashed", "dashed"), 
                         breaks = c ("CG", "FN", "NG")) +
-  labs(colour = "Insertion type", linetype = "Insertion type", tag = "C2") +
-  geom_tiplab(size = 2.5, show.legend = F) + 
-  xlim(0, 300) +
-  theme(legend.position = c(0, 1), 
-        legend.justification = c(0, 1),
-        legend.title = element_text(size = 6),
-        legend.text = element_text(size = 6))
+  labs(colour = "Insertion type", linetype = "Insertion type", 
+       subtitle = "Option 1 - Near to a genus", 
+       title = "(ii) Family-level insertions") +
+  geom_tiplab(size = 3, show.legend = F) + 
+  xlim(0, 370) +
+  theme(legend.position = "none")
 
 
 # second round - option 3: specifying two genus
@@ -127,21 +123,20 @@ tree.insert3 <- bind.tip(tree.insert2, "Corydoras_aeneus",
                          where = fastMRCA(tree.insert2, "Curculionichthys_insperatus", "Imparfinis_schubarti"), 
                          position = 0)
 
-tree.c3 <- groupOTU(tree.insert3, insertions.types)
-tree.c3$tip.label <- gsub("_", " ", tree.c3$tip.label)
+tree.op2 <- groupOTU(tree.insert3, insertions.types)
+tree.op2$tip.label <- gsub("_", " ", tree.op2$tip.label)
 
-plot.c3 <- ggtree(tree.c3, aes(color = group, linetype = group))  +
+plot.op2 <- ggtree(tree.op2, aes(color = group, linetype = group))  +
   scale_color_manual(values = c("black", "#33CCCC", "black", "black","black"), 
                      breaks = c ("CG", "FN", "NG", "BG")) +
   scale_linetype_manual(values = c("solid", "dashed", "dashed", "dashed", "dashed"), 
                         breaks = c ("CG", "FN", "NG", "BG")) +
-  labs(colour = "Insertion type", linetype = "Insertion type", tag = "C3") +
-  geom_tiplab(size = 2.5, show.legend = FALSE) + 
-  xlim(0, 300) +
-  theme(legend.position = c(0, 1), 
-        legend.justification = c(0, 1),
-        legend.title = element_text(size = 6),
-        legend.text = element_text(size = 6))
+  labs(colour = "Insertion type", linetype = "Insertion type",
+       title = "(ii) Family-level insertions",
+       subtitle = "Option 2 - Between two genera") +
+  geom_tiplab(size = 3, show.legend = FALSE) + 
+  xlim(0, 370) +
+  theme(legend.position = "none")
 
 # third round: congeneric in the family round
 tree.insert4 <- add.species.to.genus(tree = tree.insert3, species = "Rineloricaria_sp2")
@@ -154,13 +149,11 @@ plot.d <- ggtree(tree.d, aes(color = group, linetype = group))  +
                      breaks = c ("CG", "FN", "NG", "BG", "CGF")) +
   scale_linetype_manual(values = c("solid", "dashed", "dashed", "dashed", "dashed", "dashed"), 
                         breaks = c ("CG", "FN", "NG", "BG", "CGF")) +
-  labs(colour = "Insertion type", linetype = "Insertion type", tag = "D") +
-  geom_tiplab(size = 2.5, show.legend = F) + 
-  xlim(0, 300) +
-  theme(legend.position = c(0, 1), 
-        legend.justification = c(0, 1),
-        legend.title = element_text(size = 6),
-        legend.text = element_text(size = 6))
+  labs(colour = "Insertion type", linetype = "Insertion type", 
+       title = "(iii) Congeneric insertion at family-level") +
+  geom_tiplab(size = 3, show.legend = F) + 
+  xlim(0, 370) +
+  theme(legend.position = "none")
 
 # Finaly, we can cut the tree according with your species pool
 spp.pool <- c("Cichlasoma_paranaense","Corydoras_aeneus", "Imparfinis_schubarti", 
@@ -175,20 +168,17 @@ tree.cutted <- groupOTU(tree.cutted, insertions.types)
 tree.cutted$tip.label <- gsub("_", " ", tree.cutted$tip.label)
 
 plot.e <- ggtree(tree.cutted, aes(linetype = group, color = group))  +
-  labs(tag =  "E", linetype = "Insertion type", color = "Insertion type") +
+  labs(title = "Final tree", linetype = "Insertion type", color = "Insertion type") +
   scale_color_manual(values = c("black", viridis(5)), 
                      breaks = c("CG", "FN", "NG", "BG", "CGF")) +
   geom_treescale(x = 0, width = 20, fontsize = 3.5, offset = .15) +
   scale_linetype_manual(values = c("solid", "dashed", "dashed", 
                                    "dashed", "dashed", "dashed"),
                         breaks = c("CG", "FN", "NG", "BG", "CGF")) +
-  geom_tiplab(size = 2.5, show.legend = FALSE) +
-  guides(linetype = guide_legend(override.aes = list(size = .8))) +
-  xlim(0, 300) + 
-  theme(legend.position = c(0, 1), 
-        legend.justification = c(0, 1),
-        legend.title = element_text(size = 6),
-        legend.text = element_text(size = 6))
+  geom_tiplab(size = 3, show.legend = FALSE) +
+  # guides(linetype = guide_legend(override.aes = list(size = .8))) +
+  xlim(0, 370) + 
+  theme(legend.position = "none")
 
 # include the family images, but first we need the family node positions
 plotTree(tree.cutted, node.numbers = T)
@@ -205,15 +195,19 @@ phylopic_info.final <- data.frame(node = c(15, 16, 18),
 
 plot.e <- plot.e %<+% phylopic_info.final + 
   geom_nodelab(aes(image = phylopic), geom = "phylopic",
-               alpha = 1, color = 'steelblue', size = .08)
+               alpha = 1, color = 'gray40', size = .1)
 
 # saving all figures together
-squematic.fig <- cowplot::plot_grid(plot.a, plot.b, plot.c1,
-                                    plot.d, plot.e,
+squematic.fig <- cowplot::plot_grid(NULL, NULL,
+                                    plot.op1,
                                     NULL, NULL,
-                                    plot.c2, NULL, NULL, NULL, NULL,
-                                    plot.c3, nrow = 3 , ncol = 5,
+                                    plot.a, plot.b,
+                                    plot.op2, 
+                                    plot.d, plot.e,
+                                    NULL, NULL, 
+                                    plot.op3, nrow = 3 , ncol = 5,
                                     scale = 0.9)
+squematic.fig
 
-cowplot::save_plot("./Squematic_fig.png", squematic.fig, base_height = 12,
+cowplot::save_plot("./Squematic_fig.png", squematic.fig, base_height = 15,
                    ncol = 1, nrow = 1)
