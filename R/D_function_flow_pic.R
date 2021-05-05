@@ -44,8 +44,8 @@ phylopic_info <- data.frame(node = c(12, 16, 17, 19),
 insertions.types <- list(CG = "Gymnotus_sp1",
                          FN = "Rineloricaria_sp1",
                          CGF = "Rineloricaria_sp2", 
-                         NG = "Phenacorhamdia_sp1",
-                         BG = "Corydoras_aeneus")
+                         NG = "Rineloricaria_sp1",
+                         BG = "Rineloricaria_sp1")
 
 tree.a <- groupOTU(tree.full, insertions.types) 
 tree.a$tip.label <- gsub("_", " ", tree.a$tip.label)
@@ -56,6 +56,7 @@ plot.a <- ggtree(tree.a) %<+% phylopic_info +
   theme(legend.position = c(0,1)) +
   geom_nodelab(aes(image = phylopic), geom = "phylopic",
                color = 'gray40', size = .1) +
+  geom_tiplab(size = 3, show.legend = FALSE) +
   xlim(0, 370) + geom_treescale(x = 0, width = 20, fontsize = 3.5, offset = .15)
 
 # initiate the insertion procedure:
@@ -76,14 +77,14 @@ plot.b <- ggtree(tree.b, aes(color = group, linetype = group))  +
 
 # second round - option 1: add into family node, as polytomy
 tree.insert1<- bind.tip(tree.insert, "Rineloricaria_sp1", 
-                        where = fastMRCA(tree.insert,"Loricaria_luciae", "Curculionichthys_insperatus"), 
+                        where = fastMRCA(tree.insert,"Loricaria_luciae", "Imparfinis_schubarti"), 
                         position = 0)
 
 tree.op3 <- groupOTU(tree.insert1, insertions.types)
 tree.op3$tip.label <- gsub("_", " ", tree.op3$tip.label)
 
 plot.op3 <- ggtree(tree.op3, aes(color = group, linetype = group))  +
-  scale_color_manual(values = c("black","black", "#33CCCC"), breaks = c("CG", "FN")) +
+  scale_color_manual(values = c("black", "#33CCCC", "black"), breaks = c("CG", "FN")) +
   scale_linetype_manual(values = c("solid", "dashed", "dashed"), breaks = c("CG", "FN")) +
   labs(colour = "Insertion type", linetype = "Insertion type", 
        title = "(ii) Family-level insertions", subtitle = "Option 3 - Family node") +
@@ -93,20 +94,21 @@ plot.op3 <- ggtree(tree.op3, aes(color = group, linetype = group))  +
 
 
 # Second round - option 2: specifying a relationship with some genus
-pos.genus <- which(c(tree.insert1$tip.label, 
-                     tree.insert1$node.label) == "Rhamdia_quelen") 
+pos.genus <- which(c(tree.insert$tip.label, 
+                     tree.insert$node.label) == "Rhamdia_quelen") 
 
-posit.genus <- tree.insert1$edge.length[sapply(pos.genus, function(x, y) 
-  which(y == x), y = tree.insert1$edge[, 2])]
+posit.genus <- tree.insert$edge.length[sapply(pos.genus, function(x, y) 
+  which(y == x), y = tree.insert$edge[, 2])]
 
-tree.insert2 <- bind.tip(tree.insert1, "Phenacorhamdia_sp1",
+tree.insert2 <- bind.tip(tree.insert, "Rineloricaria_sp1",
                          where = pos.genus, position = posit.genus/2) #
 
 tree.op1 <- groupOTU(tree.insert2, insertions.types)
 tree.op1$tip.label <- gsub("_", " ", tree.op1$tip.label)
 
+
 plot.op1 <- ggtree(tree.op1, aes(color = group, linetype = group))  +
-  scale_color_manual(values = c("black", "black", "black", "#33CCCC"), 
+  scale_color_manual(values = c("black", "#33CCCC", "black", "black"), 
                      breaks = c ("CG", "FN", "NG")) +
   scale_linetype_manual(values = c("solid", "dashed", "dashed", "dashed"), 
                         breaks = c ("CG", "FN", "NG")) +
@@ -119,8 +121,8 @@ plot.op1 <- ggtree(tree.op1, aes(color = group, linetype = group))  +
 
 
 # second round - option 3: specifying two genus
-tree.insert3 <- bind.tip(tree.insert2, "Corydoras_aeneus", 
-                         where = fastMRCA(tree.insert2, "Curculionichthys_insperatus", "Imparfinis_schubarti"), 
+tree.insert3 <- bind.tip(tree.insert, "Rineloricaria_sp1", 
+                         where = fastMRCA(tree.insert, "Curculionichthys_insperatus", "Loricaria_luciae"), 
                          position = 0)
 
 tree.op2 <- groupOTU(tree.insert3, insertions.types)
@@ -156,9 +158,9 @@ plot.d <- ggtree(tree.d, aes(color = group, linetype = group))  +
   theme(legend.position = "none")
 
 # Finaly, we can cut the tree according with your species pool
-spp.pool <- c("Cichlasoma_paranaense","Corydoras_aeneus", "Imparfinis_schubarti", 
-              "Phenacorhamdia_sp1", "Rineloricaria_sp1", "Rineloricaria_sp2", 
-              "Curculionichthys_insperatus", "Bryconamericus_exodon", 
+spp.pool <- c("Cichlasoma_paranaense", "Imparfinis_schubarti", 
+              "Rineloricaria_sp1", "Rineloricaria_sp2", "Hypostomus_iheringii",
+              "Curculionichthys_insperatus", "Bryconamericus_exodon", "Astyanax_lacustris",
               "Gymnotus_inaequilabiatus", "Gymnotus_sp1")
 
 spp.pool <- setNames(spp.pool, spp.pool)
@@ -180,22 +182,6 @@ plot.e <- ggtree(tree.cutted, aes(linetype = group, color = group))  +
   xlim(0, 370) + 
   theme(legend.position = "none")
 
-# include the family images, but first we need the family node positions
-plotTree(tree.cutted, node.numbers = T)
-# 18 = Gimnotiformes
-# 16 = Loricariidae
-# 15 = Heptapteridae
-
-phylopic_info.final <- data.frame(node = c(15, 16, 18),
-                                  phylopic = c("ecf0d435-df11-4c44-925e-451b763973c2",
-                                               "ae1d3ca5-f6d9-49dd-a431-e1bea5a3bdf3",
-                                               "7be4fe69-28df-4a1f-99a0-666aafba3950"),
-                                  family = c("Heptapteridae", "Loricariidae",
-                                             "Gimnotidae"))
-
-plot.e <- plot.e %<+% phylopic_info.final + 
-  geom_nodelab(aes(image = phylopic), geom = "phylopic",
-               alpha = 1, color = 'gray40', size = .1)
 
 # saving all figures together
 squematic.fig <- cowplot::plot_grid(NULL, NULL,
@@ -207,7 +193,9 @@ squematic.fig <- cowplot::plot_grid(NULL, NULL,
                                     NULL, NULL, 
                                     plot.op3, nrow = 3 , ncol = 5,
                                     scale = 0.9)
-squematic.fig
 
-cowplot::save_plot("./Squematic_fig.png", squematic.fig, base_height = 15,
+cowplot::save_plot(here::here("output", "images", "Squematic_fig.png"), 
+                   squematic.fig, 
+                   base_height = 15, 
+                   base_width = 30, 
                    ncol = 1, nrow = 1)
