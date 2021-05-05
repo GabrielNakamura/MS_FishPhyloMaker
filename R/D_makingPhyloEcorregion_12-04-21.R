@@ -1,11 +1,15 @@
 
-# read data and libraries ---------------------------------------------------------------
+# read libraries ---------------------------------------------------------------
 library(FishPhyloMaker)
-raw_data <- read.csv(here::here("data", "osm-raw-data.csv"), sep=";")
-data <- raw_data[-which(duplicated(raw_data$SpecCode)==TRUE),]
-data$Genus.species <- gsub("[.]","_",data$Genus.species)
-species_list <- data$Genus.species
 
+
+# analyzing all data ------------------------------------------------------
+
+taxa_all <- FishPhyloMaker::FishTaxaMaker(data = species_list, allow.manual.insert = TRUE)
+phylo_all <- FishPhyloMaker::FishPhyloMaker(data = taxa_all$Taxon_data_FishPhyloMaker, 
+                                            insert.base.node = TRUE, 
+                                            return.insertions = TRUE,
+                                            progress.bar = TRUE)
 
 # separating ecoregions ---------------------------------------------------
 ecoregion <- names(table(data$X3_Ecoregion))
@@ -61,31 +65,4 @@ res_paleartic <- FishPhyloMaker(data = taxa_paleartic$Taxon_data_FishPhyloMaker,
                                 return.insertions = TRUE, 
                                 insert.base.node = TRUE)
 saveRDS(res_paleartic, file = here::here("phylo_paleartic.rds"))
-
-# calculating PD ----------------------------------------------------------
-
-library(picante)
-
-exclude <- drop.tip(phylo_afrotropics$Phylogeny, tip = match(phylo_afrotropics$Insertions_data[which(phylo_afrotropics$Insertions_data$insertions ==
-                                                "Present_in_Tree"), "s"],
-      phylo_afrotropics$Phylogeny$tip.label
-      ))$tip.label
-phylo_afrotropics_present <- drop.tip(phylo_afrotropics$Phylogeny, tip = exclude)
-PD_present_afrotropic <- sum(phylo_afrotropics_present$edge.length)
-
-congeneric_exclude<- drop.tip(phylo_afrotropics$Phylogeny, tip = match(phylo_afrotropics$Insertions_data[which(phylo_afrotropics$Insertions_data$insertions ==
-                                                                                            "Congeneric_insertion"), "s"],
-                                                  phylo_afrotropics$Phylogeny$tip.label
-))$tip.label
-phylo_afrotropics_congeneric <- drop.tip(phylo_afrotropics$Phylogeny, congeneric_exclude)
-PD_congeneric_afrotropic <- sum(phylo_afrotropics_congeneric$edge.length)
-PD_total_afrotropic <- sum(PD_present_afrotropic, PD_congeneric_afrotropic)
-PD_congeneric_afrotropic/PD_total_afrotropic
-PD_present_afrotropic/PD_total_afrotropic
-
-
-defict_neotropic <- PD_defict(phylo = phylo_neotropic$Phylogeny, data = phylo_neotropic$Insertions_data, level = "Congeneric_insertion")
-defict_neartic <- PD_defict(phylo = phylo_neartic$Phylogeny, data = phylo_neartic$Insertions_data, level = "Congeneric_insertion")
-defict_afrotropic <- PD_defict(phylo = phylo_afrotropics$Phylogeny, data = phylo_afrotropics$Insertions_data, level = "Congeneric_insertion")
-defict_indomalay <- PD_defict(phylo = phylo_indomalay$Phylogeny, data = phylo_indomalay$Insertions_data, level = "Congeneric_insertion")
 
