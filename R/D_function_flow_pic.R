@@ -12,7 +12,7 @@ library(viridis)
 tree.full <- ape::read.tree(here::here("data", "spp_example.txt"))
 
 # finding the phylopic images for family nodes
-fam.pic <- c("Cichlidae", "Heptapteridae", "Loricariidae", 
+fam.pic <- c("Cichlidae", "Loricariidae", 
              "Characidae")
 
 f.pic <- ggimage::phylopic_uid(fam.pic)
@@ -20,17 +20,15 @@ f.pic <- ggimage::phylopic_uid(fam.pic)
 #finding the node position for plot the phylopics
 phytools::plotTree(tree = tree.full, node.numbers = T)
 # 19 = Characidae
-# 17 = Loricariidae
-# 16 = Heptapteridae
+# 15 = Loricariidae
 # 12 = Cichlidae
 
 # create a data frame with the informations
-phylopic_info <- data.frame(node = c(12, 16, 17, 19),
+phylopic_info <- data.frame(node = c(12, 15, 19),
                             phylopic = c("335e6e09-38a2-4a56-9e63-335dfc9e722a",
-                                         "ecf0d435-df11-4c44-925e-451b763973c2",
                                          "ae1d3ca5-f6d9-49dd-a431-e1bea5a3bdf3",
                                          "7be4fe69-28df-4a1f-99a0-666aafba3950"),
-                            family = c("Cichlidae", "Heptapteridae", "Loricariidae",
+                            family = c("Cichlidae", "Loricariidae",
                                        "Characidae"))
 
 # create a list specifying the type of insertions this species are 
@@ -77,7 +75,7 @@ plot.b <- ggtree(tree.b, aes(color = group, linetype = group))  +
 
 # second round - option 1: add into family node, as polytomy
 tree.insert1<- bind.tip(tree.insert, "Rineloricaria_sp1", 
-                        where = fastMRCA(tree.insert,"Loricaria_luciae", "Imparfinis_schubarti"), 
+                        where = fastMRCA(tree.insert,"Loricaria_luciae", "Ancistrus_reisi"), 
                         position = 0)
 
 tree.op3 <- groupOTU(tree.insert1, insertions.types)
@@ -95,7 +93,7 @@ plot.op3 <- ggtree(tree.op3, aes(color = group, linetype = group))  +
 
 # Second round - option 2: specifying a relationship with some genus
 pos.genus <- which(c(tree.insert$tip.label, 
-                     tree.insert$node.label) == "Rhamdia_quelen") 
+                     tree.insert$node.label) == "Loricaria_luciae") 
 
 posit.genus <- tree.insert$edge.length[sapply(pos.genus, function(x, y) 
   which(y == x), y = tree.insert$edge[, 2])]
@@ -158,7 +156,7 @@ plot.d <- ggtree(tree.d, aes(color = group, linetype = group))  +
   theme(legend.position = "none")
 
 # Finaly, we can cut the tree according with your species pool
-spp.pool <- c("Cichlasoma_paranaense", "Imparfinis_schubarti", 
+spp.pool <- c("Cichlasoma_paranaense", "Ancistrus_reisi", "Ancistrus_pirareta", 
               "Rineloricaria_sp1", "Rineloricaria_sp2", "Hypostomus_iheringii",
               "Curculionichthys_insperatus", "Bryconamericus_exodon", "Astyanax_lacustris",
               "Gymnotus_inaequilabiatus", "Gymnotus_sp1")
