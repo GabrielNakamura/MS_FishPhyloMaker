@@ -1,4 +1,4 @@
-PD_deficit <- function(phylo, data, level = "Congeneric_insertion"){
+Darwinian_deficit <- function(phylo, data, level = "Congeneric_insertion"){
   names_exclude <- phylo$tip.label[na.omit(match(data[which(data$insertions == "Present_in_Tree"), "s"], 
                                 phylo$tip.label))]
   
