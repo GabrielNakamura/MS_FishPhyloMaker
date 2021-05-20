@@ -51,7 +51,7 @@ phy_perBasin <- lapply(list_spp_perBasin, function(x){
   ape::drop.tip(phylo_drainages$Phylogeny, tip = rm_tip)
 })
 
-PD_deficit_all <- lapply(phy_perBasin, function(x) PD_defict(phylo = x, 
+PD_deficit_all <- lapply(phy_perBasin, function(x) Darwinian_deficit(phylo = x, 
                                                              data = phylo_drainages$Insertions_data, 
                                                              level = "Congeneric_insertion")
 )
