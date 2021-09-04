@@ -30,9 +30,11 @@ w <- ggplot(wrld) +
   geom_polygon(aes(x = long, y = lat, group = group), alpha = 0.3) +
   geom_polygon(data = data_map_PDeficit, aes(x = long, y = lat, group = id, 
                                              fill = deficit),
-                            colour = "black", size = .15) + scale_fill_viridis_c() +
-  labs(x = "Longitude", y = "Latitude")
-w
+                            colour = "black", size = .15) +
+  scale_fill_viridis_c() +
+  labs(x = "Longitude", y = "Latitude") +
+  coord_sf(crs = "+proj=moll")
 
-cowplot::save_plot(filename = here::here("output", "images", "world_map.png"), 
-                   w, base_width = 10, base_height = 5)
+ggsave(filename = here::here("output", "images", "world_map.png"), plot = w,
+       width = 10, height = 5, 
+       dpi = 700)
