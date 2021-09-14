@@ -14,13 +14,6 @@ shapefile <- sf::read_sf(here::here("data"), as_tibble = T)
 
 # setting theme -----------------------------------------------------------
 
-theme_update(
-  plot.title = element_text(family = "Bitter", size = 32, hjust = 0.5),
-  legend.position = "bottom",
-  legend.title = element_text(family = "Bitter", color = "black", face = "bold", size = 12),
-  legend.text = element_text(family = "Roboto Mono", color = "black", size = 10)
-)
-
 theme_set(theme_bw())
 
 # formatting data deficit ----------------------------------------------------------
