@@ -6,11 +6,7 @@ library(FishPhyloMaker)
 
 # analyzing all data ------------------------------------------------------
 
-taxa_all <- FishPhyloMaker::FishTaxaMaker(data = species_list, allow.manual.insert = TRUE)
-phylo_all <- FishPhyloMaker::FishPhyloMaker(data = taxa_all$Taxon_data_FishPhyloMaker, 
-                                            insert.base.node = TRUE, 
-                                            return.insertions = TRUE,
-                                            progress.bar = TRUE)
+all_taxa_names <- FishTaxaMaker(data = species_list, allow.manual.insert = TRUE)
 
 all_taxa_names <- FishTaxaMaker(data = species_list, allow.manual.insert = TRUE)
 
@@ -73,13 +69,13 @@ res_paleartic <- FishPhyloMaker(data = taxa_paleartic$Taxon_data_FishPhyloMaker,
                                 insert.base.node = TRUE)
 
 # saving results ----------------------------------------------------------
-
+saveRDS(object = phylo_all, file = here::here("output", "phylo_all.rds"))
 saveRDS(object = res_afrotropics, file = here::here("output", "phylo_afrotropics.rds"))
-saveRDS(res_paleartic, file = here::here("phylo_paleartic.rds"))
-saveRDS(res_oceania, file = here::here("phylo_oceania.rds"))
-saveRDS(object = res_neotropic, file = here::here("phylo_neotropic.rds"))
+saveRDS(res_paleartic, file = here::here("output", "phylo_paleartic.rds"))
+saveRDS(res_oceania, file = here::here("output", "phylo_oceania.rds"))
+saveRDS(object = res_neotropic, file = here::here("output", "phylo_neotropic.rds"))
 saveRDS(object = res_neartic, file = here::here("output", "phylo_neartic.rds"))
-saveRDS(object = res_neotropic, file = here::here("phylo_neotropic.rds"))
+saveRDS(object = res_neotropic, file = here::here("output", "phylo_neotropic.rds"))
 saveRDS(object = res_indomalay, file = here::here("output", "phylo_indomalay.rds"))
 saveRDS(object = res_australasia, file = here::here("output", "phylo_australasia.rds"))
 
