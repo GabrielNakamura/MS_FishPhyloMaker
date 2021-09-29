@@ -1,8 +1,9 @@
 # read data ---------------------------------------------------------------
-raw_data <- read.csv(here::here("data", "osm-raw-data.csv"), sep=";")
-data <- raw_data[-which(duplicated(raw_data$SpecCode)==TRUE),]
-data$Genus.species <- gsub("[.]","_",data$Genus.species)
-species_list <- data$Genus.species
+
+drainage_basins <- read.csv(here::here("data", "Drainage_Basins_Table.csv"), sep = ";")
+occ_drainage <- read.csv(here::here("data", "Occurrence_Table.csv"), sep = ";")
+occ_drainage$X2.Species.Name.in.Source <- gsub("[.]", "_", occ_drainage$X2.Species.Name.in.Source)
+occ_drainage$X6.Fishbase.Valid.Species.Name <- gsub("[.]", "_", occ_drainage$X6.Fishbase.Valid.Species.Name)
 
 # read results ------------------------------------------------------------
 
