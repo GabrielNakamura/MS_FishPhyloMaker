@@ -1,50 +1,17 @@
 
 # reading data and functions ----------------------------------------------
-# data
-# osm_raw_data <- read.csv(here::here("data", "osm-raw-data.csv"), sep = ";")
+phylo_allDrainages <- readRDS(here::here("output", "phylo_drainages.rds"))
+phylo_all_spp <- readRDS(here::here("output", "phylo_all.rds"))
 drainage_basins <- read.csv(here::here("data", "Drainage_Basins_Table.csv"), sep = ";")
 occ_drainage <- read.csv(here::here("data", "Occurrence_Table.csv"), sep = ";")
 occ_drainage$X2.Species.Name.in.Source <- gsub("[.]", "_", occ_drainage$X2.Species.Name.in.Source)
 occ_drainage$X6.Fishbase.Valid.Species.Name <- gsub("[.]", "_", occ_drainage$X6.Fishbase.Valid.Species.Name)
 
-
 # libraries
 library(FishPhyloMaker)
 
-names_spp_valid <- unique(occ_drainage$X6.Fishbase.Valid.Species.Name)
-
-# obtaining phylogeny  ----------------------------------------------------
-taxon_data <- FishPhyloMaker::FishTaxaMaker(data = names_spp_valid, allow.manual.insert = TRUE)
-Pimelodidae
-Siluriformes 
-Petromyzontidae
-Petromyzontiformes
-Nemacheilidae
-Cypriniformes
-Trichomycteridae
-Siluriformes
-Procatopodidae
-Cyprinodontiformes
-
-
-# correcting families and orders ------------------------------------------
-
-FishPhyloMaker_data <- taxon_data$Taxon_data_FishPhyloMaker
-FishPhyloMaker_data <- FishPhyloMaker_data[- which(is.na(unique(FishPhyloMaker_data$s)) == TRUE), ]
-FishPhyloMaker_data[which(FishPhyloMaker_data$f == "Cichlidae"), "o"] <- "Cichliformes"
-FishPhyloMaker_data[which(FishPhyloMaker_data$o == "Scorpaeniformes"), "o"] <- "Perciformes"
-
-
-# making phylogeny --------------------------------------------------------
-
-phylo_drainages <- FishPhyloMaker(data = FishPhyloMaker_data,
-                                              insert.base.node = TRUE,
-                                              return.insertions = TRUE,
-                                              progress.bar = TRUE)
-
-insertions_allDrainages <- phylo_drainages$Insertions_data
-
-phylo_allDrainages <- phylo_drainages$Phylogeny
+phylo_allDrainages$Phylogeny
+phylo_allDrainages <- phylo_all_spp$Phylogeny
 
 basin_names <- unique(occ_drainage$X1.Basin.Name)
 
