@@ -6,9 +6,8 @@ library(sf)
 library(cartogram)
 library(patchwork)
 
-phylo_drainages <- readRDS(here::here("output", "phylo_drainages.rds"))
+phylo_drainages <- readRDS(here::here("output", "phylo_all.rds"))
 PD_deficit_all <- readRDS(here::here("output", "PD_deficit_all.rds"))
-PD_deficit_order <- readRDS(here::here("output", "PD_deficit_perOrder.rds"))
 shapefile <- sf::read_sf(here::here("data"), as_tibble = T)
 
 
@@ -22,22 +21,24 @@ PD_deficit_all <- unlist(PD_deficit_all[match(rownames(PD_deficit_order), names(
 
 df_deficit <- data.frame(BasinName = rownames(PD_deficit_order), PD_deficit_all, PD_deficit_order)
 
-
-
 # formatting shapefiles for plot --------------------------------------------
 
 sf_darwinian <- 
   shapefile %>%
   st_transform(crs = "+proj=robin") %>% 
-  left_join(df_deficit)
+  left_join(df_PD_deficit_all) %>% 
+  left_join(df_PD_deficit_characi) %>% 
+  left_join(df_PD_deficit_cyprino) %>% 
+  left_join(df_PD_deficit_perci) %>% 
+  left_join(df_PD_deficit_siluri)
 
-sf_darwinian_rmzero <- sf_darwinian[- which(sf_darwinian$PD_deficit_all == 0.00000000), ]
+
 
 # plotting map ------------------------------------------------------------
 
 map_PD_deficit_wrld <- ggplot() +
-  geom_sf(data = sf_darwinian_rmzero, aes(geometry = geometry, 
-                                          fill = PD_deficit_all),
+  geom_sf(data = sf_darwinian, aes(geometry = geometry, 
+                                          fill = Darwinian_deficit_all),
           color = "transparent", size = 0.1) +
   rcartocolor::scale_fill_carto_c(palette = "SunsetDark", 
                                   direction = 1, 
@@ -66,8 +67,8 @@ map_PD_deficit_wrld <- ggplot() +
 
 
 map_PD_deficit_perci <- ggplot() +
-  geom_sf(data = sf_darwinian_rmzero, aes(geometry = geometry, 
-                                          fill = deficitPerci),
+  geom_sf(data = sf_darwinian, aes(geometry = geometry, 
+                                          fill = Darwinian_deficit_perci),
           color = "transparent", size = 0.1) +
   labs(subtitle = "Perciformes") +
   rcartocolor::scale_fill_carto_c(palette = "SunsetDark", 
@@ -87,8 +88,8 @@ map_PD_deficit_perci <- ggplot() +
         ) 
 
 map_PD_deficit_chara <- ggplot() +
-  geom_sf(data = sf_darwinian_rmzero, aes(geometry = geometry, 
-                                          fill = deficitChar),
+  geom_sf(data = sf_darwinian, aes(geometry = geometry, 
+                                          fill = Darwinian_deficit_characi),
           color = "transparent", size = 0.1) +
   labs(subtitle = "Characiformes", fill = expression(PD[inserted]/PD[total])) +
   rcartocolor::scale_fill_carto_c(palette = "SunsetDark", 
@@ -108,8 +109,8 @@ map_PD_deficit_chara <- ggplot() +
   ) 
 
 map_PD_deficit_cypri <- ggplot() +
-  geom_sf(data = sf_darwinian_rmzero, aes(geometry = geometry, 
-                                          fill = deficitCypri),
+  geom_sf(data = sf_darwinian, aes(geometry = geometry, 
+                                          fill = Darwinian_deficit_cyprino),
           color = "transparent", size = 0.1) +
   labs(subtitle = "Cypriniformes", fill = expression(PD[inserted]/PD[total])) +
   rcartocolor::scale_fill_carto_c(palette = "SunsetDark", 
@@ -129,8 +130,8 @@ map_PD_deficit_cypri <- ggplot() +
   ) 
 
 map_PD_deficit_siluri <- ggplot() +
-  geom_sf(data = sf_darwinian_rmzero, aes(geometry = geometry, 
-                                          fill = deficitSilu),
+  geom_sf(data = sf_darwinian, aes(geometry = geometry, 
+                                          fill = Darwinian_deficit_siluri),
           color = "transparent", size = 0.1) +
   labs(subtitle = "Siluriformes", fill = expression(PD[inserted]/PD[total])) +
   rcartocolor::scale_fill_carto_c(palette = "SunsetDark", 
