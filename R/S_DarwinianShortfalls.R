@@ -8,6 +8,10 @@ library(patchwork)
 
 phylo_drainages <- readRDS(here::here("output", "phylo_all.rds"))
 PD_deficit_all <- readRDS(here::here("output", "PD_deficit_all.rds"))
+df_PD_deficit_characi <- readRDS(here::here("output", "df_PD_deficit_characi.rds"))
+df_PD_deficit_cyprino <- readRDS(here::here("output", "df_PD_deficit_cyprino.rds"))
+df_PD_deficit_cichli <- readRDS(here::here("output", "df_PD_deficit_cichli.rds"))
+df_PD_deficit_siluri <- readRDS(here::here("output", "df_PD_deficit_siluri.rds"))
 shapefile <- sf::read_sf(here::here("data"), as_tibble = T)
 
 
@@ -17,9 +21,8 @@ theme_set(theme_bw())
 
 # formatting data deficit ----------------------------------------------------------
 
-PD_deficit_all <- unlist(PD_deficit_all[match(rownames(PD_deficit_order), names(PD_deficit_all))])
-
-df_deficit <- data.frame(BasinName = rownames(PD_deficit_order), PD_deficit_all, PD_deficit_order)
+df_PD_deficit_all <- do.call(rbind, PD_deficit_all)
+df_PD_deficit_all <- data.frame(BasinName = rownames(df_PD_deficit_all), Darwinian_deficit_all = df_PD_deficit_all[, "Darwinian_deficit"])
 
 # formatting shapefiles for plot --------------------------------------------
 
@@ -29,9 +32,8 @@ sf_darwinian <-
   left_join(df_PD_deficit_all) %>% 
   left_join(df_PD_deficit_characi) %>% 
   left_join(df_PD_deficit_cyprino) %>% 
-  left_join(df_PD_deficit_perci) %>% 
+  left_join(df_PD_deficit_cichli) %>% 
   left_join(df_PD_deficit_siluri)
-
 
 
 # plotting map ------------------------------------------------------------
@@ -66,11 +68,11 @@ map_PD_deficit_wrld <- ggplot() +
         ) 
 
 
-map_PD_deficit_perci <- ggplot() +
+map_PD_deficit_cichli <- ggplot() +
   geom_sf(data = sf_darwinian, aes(geometry = geometry, 
-                                          fill = Darwinian_deficit_perci),
+                                          fill = Darwinian_deficit_cichli),
           color = "transparent", size = 0.1) +
-  labs(subtitle = "Perciformes") +
+  labs(subtitle = "Cichliformes") +
   rcartocolor::scale_fill_carto_c(palette = "SunsetDark", 
                                 direction = 1, 
                                 limits = c(0, 1),  ## max percent overall
@@ -153,7 +155,7 @@ map_PD_deficit_siluri <- ggplot() +
 # full pannel maps ------------------------------------------------------------
 
 
-full_map <- map_PD_deficit_wrld / (map_PD_deficit_chara | map_PD_deficit_cypri | map_PD_deficit_perci | map_PD_deficit_siluri) +
+full_map <- map_PD_deficit_wrld / (map_PD_deficit_chara | map_PD_deficit_cypri | map_PD_deficit_cichli | map_PD_deficit_siluri) +
   plot_layout(heights = c(1, .75))
 
 # saving plot -------------------------------------------------------------

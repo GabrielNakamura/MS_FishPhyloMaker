@@ -1,27 +1,152 @@
-res_afrotropics$Insertions_data$basin  <- "Afrotropic"
-res_indomalay$Insertions_data$basin  <- "Indomalay"
-res_neartic$Insertions_data$basin  <- "Neartic"
-res_neotropic$Insertions_data$basin  <- "Neotropic"
 
-new_data <- rbind(res_afrotropics$Insertions_data, res_indomalay$Insertions_data, 
-                  res_neartic$Insertions_data, res_neotropic$Insertions_data)
-new_data$insertions <- as.factor(new_data$insertions)
-new_data$insertions2 <- factor(new_data$insertions, levels = c("Present_in_Tree", "Congeneric_insertion", "Congeneric_insertion_roundFamily", "Family_insertion", "Order_insertion"))
-head(new_data)
+# reading data and libraries ----------------------------------------------
+
+phylo_complete <- readRDS(here::here("output", "phylo_all.rds"))
+insertions_all <- readRDS(here::here("output", "insertions_all.rds"))
+library(ggtree)
+library(ggtreeExtra)
+library(ggnewscale)
+library(patchwork)
+library(ggplot2)
+
+# setting theme -----------------------------------------------------------
+
+theme_set(theme_bw())
+
+# barplot -------------------------------------------------------------
+
+# organizing data
+Eco_basin <- lapply(1:length(list_spp_perBasin), function(x){
+  drainage_basins[which(drainage_basins$X1.Basin.Name == names(list_spp_perBasin[x])), "X3.Ecoregion"]
+})
+
+
+# corrigir nomes para nomes válidos
+data_basin_ecoregion <- data.frame(spp = unlist(list_spp_perBasin), 
+                                   basin.name = names(unlist(list_spp_perBasin)),
+                                   Ecoregion = unlist(lapply(1:length(Eco_basin), 
+                                                             function(x) rep(Eco_basin[[x]],
+                                                                             times = length(list_spp_perBasin[[x]])
+                                                             )
+                                   )
+                                   )
+)
+
+
+
+
+data_basin_ecoregion$insertions <- insertions_all[match(data_basin_ecoregion$spp,insertions_all$s), "insertions"]
+data_basin_ecoregion$insertions <- factor(data_basin_ecoregion$insertions, 
+                                          levels = c("Present_in_Tree", 
+                                                     "Congeneric_insertion",
+                                                     "Family_insertion",
+                                                     "Congeneric_Family_level", 
+                                                     "Order_insertion", 
+                                                     "Not_inserted"))
+data_basin_ecoregion <- data_basin_ecoregion[-which(is.na(data_basin_ecoregion$insertions) == TRUE), ]
 
 # Stacked + percent
-library(ggplot2)
-ggplot(new_data, aes(x = insertions2, group = basin)) + 
-  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat = "count") +
-  labs(y = "Percent", fill = "Insertion type") +
-  facet_wrap(~basin) +
-  scale_y_continuous(labels = scales::percent)  +
-  scale_x_discrete(labels = c("Present in Tree", 
-                              "Congeneric insertion",
-                              "Family insertion",
-                              "Congeneric at Family",
-                              "Order insertion")) +
-  rcartocolor::scale_fill_carto_d(palette = "SunsetDark", 
-                                  direction = 1) +
-  theme(legend.position = "none", panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
+barplot_insertion <- ggplot(data = data_basin_ecoregion, aes(x = Ecoregion, fill = insertions)) +
+  geom_bar(na.rm = TRUE) +
+  rcartocolor::scale_fill_carto_d(palette = "Safe", 
+                                  labels = c("Present",
+                                             "Congeneric",
+                                             "Family", 
+                                             "Congeneric Family",
+                                             "Order", 
+                                             "Not inserted")) +
+  labs(y = "Total number of insertions", fill = "Type of insertion") +
+  theme(legend.position = "bottom", panel.background = element_rect(fill = "transparent"),
+        plot.margin = unit(c(0.4, 0.4, 0.4, 0.4), "mm"),
+        legend.title = element_text(family = "Times", color = "black", face = "bold", size = 12),
+        legend.text = element_text(family = "Times", color = "black", size = 12), 
+        axis.text = element_text(family = "Times", color = "black", size = 12), panel.border = element_blank(), axis.ticks = element_blank(),
+        plot.subtitle = element_text(family = "Arial", 
+                                     color = "black",
+                                     size = 9, 
+                                     hjust = 0.5, 
+                                     margin = margin(b = 6)
+        )
+  )
+
+  
+# plotting tree -----------------------------------------------------------
+
+df_insertion <- insertions_all[- which(insertions_all$insertions == "Not_inserted"), ]
+df_insertion_org <- df_insertion[match(df_insertion$s, phylo_complete$tip.label), ]
+df_insertion_tree <- data.frame(df_insertion_org$insertions)
+rownames(df_insertion_tree) <- df_insertion_org$s
+orders <- names(sort(table(insertions_all$o), decreasing = TRUE)[1:7])
+nodedf <- data.frame(nodes = unlist(lapply(orders, 
+                                           function(x) phytools::findMRCA(tree = phylo_complete, 
+                                                                          tips = insertions_all[which(insertions_all$o == x), "s"])
+)
+))
+names_df_order <- names(sort(table(insertions_all$o), decreasing = TRUE)[1:7])
+nodedf$Orders <- names_df_order
+
+# adjusting the order of insertions
+insertions_all$insertions <- factor(insertions_all$insertions, 
+                                   levels = c("Present_in_Tree", 
+                                              "Congeneric_insertion",
+                                              "Family_insertion",
+                                              "Congeneric_Family_level", 
+                                              "Order_insertion", 
+                                              "Not_inserted")
+                                   )
+
+
+
+# plotting tree -----------------------------------------------------------
+
+phylo <- ggtree::ggtree(phylo_complete, layout = "circular") + 
+  geom_hilight(data = nodedf, mapping = aes(node = nodes), extendto = 400,
+               alpha = 0.3, fill = "grey", color = "grey60",
+               size = 0.05) +
+  geom_cladelab(data = nodedf, 
+                mapping=aes(node = nodes, 
+                            label = Orders),
+                hjust=0.5,
+                angle="auto",
+                barsize=NA,
+                horizontal=FALSE, 
+                fontsize=2.4,
+                fontface="italic"
+  ) +
+  geom_fruit(data = insertions_all, geom = geom_tile,
+             mapping = aes(y = s, x = insertions, fill = insertions),
+             color = "grey50", offset = 0.1, size = 0.02, 
+             pwidth = 0.3, stat = "identity") +
+  rcartocolor::scale_fill_carto_d(palette = "Safe", 
+                                   labels = c("Present",
+                                              "Congeneric",
+                                              "Family", 
+                                              "Congeneric Family",
+                                              "Order")) +
+  labs(subtitle = "", fill = "Insertions") +
+  theme(legend.position = "bottom", panel.background = element_rect(fill = "transparent"),
+        plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "mm"),
+        legend.title = element_text(family = "Times", color = "black", face = "bold", size = 12),
+        legend.text = element_text(family = "Times", color = "black", size = 12), 
+        axis.text = element_blank(), panel.border = element_blank(), axis.ticks = element_blank(),
+        plot.subtitle = element_text(family = "Arial", 
+                                     color = "black",
+                                     size = 9, 
+                                     hjust = 0.5, 
+                                     margin = margin(b = 6)
+                                     )
+        )
+
+
+
+# saving figures ----------------------------------------------------------
+
+ggsave(filename = here::here("output", "images", "phylogeny_complete.png"), plot = phylo,
+       width = 7, height = 8, 
+       dpi = 500)
+ggsave(here::here("output", "images", "barplot_insertions.png"), plot = barplot_insertion,
+       width = 7, height = 7, dpi = 500)
+
+
+
+
