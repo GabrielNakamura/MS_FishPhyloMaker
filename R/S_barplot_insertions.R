@@ -45,6 +45,10 @@ data_basin_ecoregion$insertions <- factor(data_basin_ecoregion$insertions,
                                                      "Not_inserted"))
 data_basin_ecoregion <- data_basin_ecoregion[-which(is.na(data_basin_ecoregion$insertions) == TRUE), ]
 
+
+unique(data_basin_ecoregion[which(data_basin_ecoregion$insertions != "Present_in_Tree" & data_basin_ecoregion$insertions != "Not_inserted" & data_basin_ecoregion$Ecoregion == "Nearctic"), "spp"])
+length(unique(data_basin_ecoregion[which(data_basin_ecoregion$insertions == "Congeneric_insertion" & data_basin_ecoregion$Ecoregion == "Nearctic"), "spp"]))
+
 # Stacked + percent
 barplot_insertion <- ggplot(data = data_basin_ecoregion, aes(x = Ecoregion, fill = insertions)) +
   geom_bar(na.rm = TRUE) +
