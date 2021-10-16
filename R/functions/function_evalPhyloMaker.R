@@ -1,30 +1,26 @@
+source(here::here("R","functions", "internal_filter_rank.R"))
+source(here::here("R", "functions", "internal_treedata_modif.R"))
 
-eval_PhyloMaker <- function(data, probs = 0.3,
+eval_PhyloMaker <- function(probs = 0.1,
                             insert.base.node = TRUE, 
                             return.insertions = TRUE, 
                             progress.bar = TRUE) 
 {
-  if (dim(data)[2] != 3) {
-    stop("/n data must be a dataframe with three columns (s, f, o)")
-  }
-  if (any(is.na(match(colnames(data), c("s", "f", "o"))))) {
-    stop("/n Columns of data object must be named with s, f, and o letters")
-  }
-  if (is.data.frame(data) == FALSE) {
-    stop("/n data must be a data frame object")
-  }
   fishbasedata <- as.data.frame(data.frame(rfishbase::load_taxa()))
   tree_complete <- fishtree::fishtree_phylogeny()
-  dist_phy_complete <- cophenetic(tree_complete)
   samp <- ceiling(length(tree_complete$tip.label) * probs)
   spp_samp <- tree_complete$tip.label[sample(1:length(tree_complete$tip.label),
-                                             size = length(tree_complete$tip.label)*probs)]
+                                             size = length(tree_complete$tip.label)*probs, replace = FALSE)]
   data_samp <- FishPhyloMaker::FishTaxaMaker(data = spp_samp, allow.manual.insert = FALSE)
-  spp_samp_modif <- gsub("_.*", "_notFound", data_samp$Taxon_data_FishPhyloMaker$s)
+  data_samp <- data_samp$Taxon_data_FishPhyloMaker
+  data_samp$o <- gsub("/.*", 
+                      replacement = "", 
+                      data_samp$o)
+  data_samp <- data_samp[-which(data_samp$o == "Order" | data_samp$o == "not_find"), ]
+  spp_samp_modif <- gsub("_.*", "_spp", data_samp$s)
   data_samp[, "s"] <- spp_samp_modif # species to be inserted
   data <- data_samp
   simul_unknown_tree <- ape::drop.tip(phy = tree_complete, tip = spp_samp)
-  
   rank_order <- as.character(unique(data$o))
   rank_family <- as.character(unique(data$f))
   spp <- as.character(data$s)
@@ -190,8 +186,7 @@ eval_PhyloMaker <- function(data, probs = 0.3,
     if (length(insert_spp2) == 0) {
       data_final <- 1:length(as.character(data$s))
       names(data_final) <- as.character(data$s)
-      tree_res <- suppressWarnings(ape::drop.tip(phy = phylo_order, 
-                                                 tip = treedata_modif(phy = phylo_order, data = data_final)$nc$tree_not_data))
+      tree_res <- phylo_order
       if (return.insertions == TRUE) {
         insertions <- rep("NA", nrow(data))
         data_insertions <- cbind(data, insertions)
@@ -414,9 +409,7 @@ eval_PhyloMaker <- function(data, probs = 0.3,
           if (length(rank_family2) == 0) {
             data_final <- 1:length(as.character(data$s))
             names(data_final) <- as.character(data$s)
-            tree_res <- suppressWarnings(ape::drop.tip(phy = phylo_order, 
-                                                       tip = treedata_modif(phy = phylo_order, 
-                                                                            data = data_final)$nc$tree_not_data))
+            tree_res <- phylo_order
             data_exRound3 <- NULL
             break
           }
@@ -448,9 +441,7 @@ eval_PhyloMaker <- function(data, probs = 0.3,
         if (return.insertions == TRUE) {
           data_final <- 1:length(as.character(data$s))
           names(data_final) <- as.character(data$s)
-          tree_res <- suppressWarnings(ape::drop.tip(phy = phylo_order, 
-                                                     tip = treedata_modif(phy = phylo_order, 
-                                                                          data = data_final)$nc$tree_not_data))
+          tree_res <- phylo_order
           insertions <- rep("NA", nrow(data))
           data_insertions <- cbind(data, insertions)
           Present_in_tree <- data$s[!is.na(match(data$s, 
@@ -511,9 +502,7 @@ eval_PhyloMaker <- function(data, probs = 0.3,
           no_represent_tree <- data_exRound3$s
           data_final <- 1:length(as.character(data$s))
           names(data_final) <- as.character(data$s)
-          tree_res <- suppressWarnings(ape::drop.tip(phy = phylo_order, 
-                                                     tip = treedata_modif(phy = phylo_order, 
-                                                                          data = data_final)$nc$tree_not_data))
+          tree_res <- phylo_order
           if (return.insertions == TRUE) {
             insertions <- rep("NA", nrow(data))
             species_to_genus2 <- unlist(species_to_genus2)
@@ -634,13 +623,11 @@ eval_PhyloMaker <- function(data, probs = 0.3,
         }
         data_final <- 1:length(as.character(data$s))
         names(data_final) <- as.character(data$s)
-        tree_res <- suppressWarnings(ape::drop.tip(phy = phylo_order, 
-                                                   tip = treedata_modif(phy = phylo_order, data = data_final)$nc$tree_not_data))
+        tree_res <- phylo_order
         if (return.insertions == TRUE) {
           insertions <- rep("NA", nrow(data))
           data_insertions <- cbind(data, insertions)
           species_to_genus2 <- unlist(species_to_genus2)
-          data_insertions <- cbind(data, insertions)
           Present_in_tree <- data$s[!is.na(match(data$s, 
                                                  tree_complete$tip.label))]
           Congeneric_insertion <- species_to_genus1
