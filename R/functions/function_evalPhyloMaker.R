@@ -10,18 +10,17 @@ eval_PhyloMaker <- function(k,
   tree_complete <- fishtree::fishtree_phylogeny()
   samp <- ceiling(length(tree_complete$tip.label) * probs)
   spp_samp <- tree_complete$tip.label[sample(1:length(tree_complete$tip.label),
-                                             size = length(tree_complete$tip.label)*probs, replace = FALSE)]
+                                             size = samp, replace = FALSE)]
   data_samp <- FishPhyloMaker::FishTaxaMaker(data = spp_samp, allow.manual.insert = FALSE)
-  data_samp <- data_samp$Taxon_data_FishPhyloMaker
+  data_samp <- data_samp$All_info_fishbase[, c("user_spp", "Family", "Order")]
+  colnames(data_samp) <- c("s", "f", "o")
   data_samp$o <- gsub("/.*", 
                       replacement = "", 
                       data_samp$o)
   spp_samp_return <- data_samp$s
-  data_samp <- data_samp[-which(data_samp$o == "Order" | data_samp$o == "not_find"), ]
   spp_samp_modif <- gsub("_.*", "_spp", data_samp$s)
   data_samp[, "s"] <- spp_samp_modif # species to be inserted
   data <- data_samp
-  simul_unknown_tree <- ape::drop.tip(phy = tree_complete, tip = spp_samp)
   rank_order <- as.character(unique(data$o))
   rank_family <- as.character(unique(data$f))
   spp <- as.character(data$s)
