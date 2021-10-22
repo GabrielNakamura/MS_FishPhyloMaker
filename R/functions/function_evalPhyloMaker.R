@@ -1,11 +1,11 @@
-source(here::here("R","functions", "internal_filter_rank.R"))
-source(here::here("R", "functions", "internal_treedata_modif.R"))
-
-eval_PhyloMaker <- function(probs = 0.1,
+eval_PhyloMaker <- function(k, 
+                            probs = 0.1,
                             insert.base.node = TRUE, 
                             return.insertions = TRUE, 
                             progress.bar = TRUE) 
 {
+  source(here::here("R","functions", "internal_filter_rank.R"))
+  source(here::here("R", "functions", "internal_treedata_modif.R"))
   fishbasedata <- as.data.frame(data.frame(rfishbase::load_taxa()))
   tree_complete <- fishtree::fishtree_phylogeny()
   samp <- ceiling(length(tree_complete$tip.label) * probs)
@@ -16,6 +16,7 @@ eval_PhyloMaker <- function(probs = 0.1,
   data_samp$o <- gsub("/.*", 
                       replacement = "", 
                       data_samp$o)
+  spp_samp_return <- data_samp$s
   data_samp <- data_samp[-which(data_samp$o == "Order" | data_samp$o == "not_find"), ]
   spp_samp_modif <- gsub("_.*", "_spp", data_samp$s)
   data_samp[, "s"] <- spp_samp_modif # species to be inserted
@@ -197,10 +198,11 @@ eval_PhyloMaker <- function(probs = 0.1,
                                    data$s), "s"]
         data_insertions[match(spp_on_tree, data$s), 
                         "insertions"] <- rep("Present_in_Tree", length(spp_on_tree))
-        list_res <- vector(mode = "list", length = 2)
+        list_res <- vector(mode = "list", length = 3)
         list_res[[1]] <- tree_res
         list_res[[2]] <- data_insertions
-        names(list_res) <- c("Phylogeny", "Insertions_data")
+        list_res[[3]] <- spp_samp_return
+        names(list_res) <- c("Phylogeny", "Insertions_data", "samp_spp")
         return(list_res)
       }
       else {
@@ -472,10 +474,11 @@ eval_PhyloMaker <- function(probs = 0.1,
             data_insertions[match(Congeneric_round_family, 
                                   data_insertions$s), "insertions"] <- "Congeneric_Family_level"
           }
-          list_res <- vector(mode = "list", length = 2)
+          list_res <- vector(mode = "list", length = 3)
           list_res[[1]] <- tree_res
           list_res[[2]] <- data_insertions
-          names(list_res) <- c("Phylogeny", "Insertions_data")
+          list_res[[3]] <- spp_samp_return
+          names(list_res) <- c("Phylogeny", "Insertions_data", "samp_spp")
           return(list_res)
         }
         else {
@@ -534,10 +537,11 @@ eval_PhyloMaker <- function(probs = 0.1,
               data_insertions[match(Congeneric_round_family, 
                                     data_insertions$s), "insertions"] <- "Congeneric_Family_level"
             }
-            list_res <- vector(mode = "list", length = 2)
+            list_res <- vector(mode = "list", length = 3)
             list_res[[1]] <- tree_res
             list_res[[2]] <- data_insertions
-            names(list_res) <- c("Phylogeny", "Insertions_data")
+            list_res[[3]] <- spp_samp_return
+            names(list_res) <- c("Phylogeny", "Insertions_data", "samp_spp")
             return(list_res)
           }
           return(tree_res)
@@ -658,10 +662,11 @@ eval_PhyloMaker <- function(probs = 0.1,
             data_insertions[match(data_exRound3$s, 
                                   data_insertions$s), "insertions"] <- "Order_insertion"
           }
-          list_res <- vector(mode = "list", length = 2)
+          list_res <- vector(mode = "list", length = 3)
           list_res[[1]] <- tree_res
           list_res[[2]] <- data_insertions
-          names(list_res) <- c("Phylogeny", "Insertions_data")
+          list_res[[3]] <- spp_samp_return
+          names(list_res) <- c("Phylogeny", "Insertions_data", "samp_spp")
           return(list_res)
         }
         else {
