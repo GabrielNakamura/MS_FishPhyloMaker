@@ -10,6 +10,9 @@ source(here::here("R", "functions", "function_evalPhyloMaker.R"))
 
 # sensitivity analysis ----------------------------------------------------
 
+fishbasedata <- as.data.frame(data.frame(rfishbase::load_taxa()))
+tree_complete <- fishtree::fishtree_phylogeny()
+
 n.cluster <- parallel::detectCores()
 parallel <- parallel::makeCluster(n.cluster, type = "PSOCK")
 res_01 <- parallel::parLapply(parallel, 1:50, fun = eval_PhyloMaker,

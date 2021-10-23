@@ -11,25 +11,31 @@ knitr::opts_chunk$set(
 )
 ```
 
-# MS_FishPhyloMaker_
+# MS_FishPhyloMaker
+Repository for manuscript that describes functionalities of FIshPhyloMaker package
 
-<!-- badges: start -->
-<!-- badges: end -->
+# Repository structure
+This repository contains the full data to reproduce the analysis and figures present in the manuscript "FishPhyloMaker: an R package to generate phylogenies for finned-ray fishes". 
 
-The goal of MS_FishPhyloMaker_ is to ...
+## Folders 
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+- data: contains all data needed to perform the analysis
 
-```{r cars}
-summary(cars)
-```
+- doc: .doc documents containing the manuscript describing the package
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/master/examples>.
+- output: contains all results, including figures and .rds files generated with archives contained in R folder that starts with letters D and S
 
-You can also embed plots, for example:
+- R: contains all .R scripts. Archives that starts with letter D (e.g. D_makingPhyloEcorregion_12-04-21.R) and S (e.g. S_PhylogeniesEcoregions.R) are designed to, respectivelly, run analysis and generate figures for the results of these analyses.
 
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
+# Downloading the repository
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub.
+The user can download this repo to a local folder in your computer or clone it:
+
+## downloading all files
+
+`download.file(url = "https://github.com/GabrielNakamura/MS_FishPhyloMaker/archive/main.zip", destfile = "MS_FishPhyloMaker.zip")`
+
+to unzip the .zip file in your computer type
+
+`unzip(zipfile = "MS_FishPhyloMaker.zip")`
+

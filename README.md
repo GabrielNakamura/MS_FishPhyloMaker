@@ -1,28 +1,43 @@
-# MS_FishPhyloMaker
-Repository for manuscript that describes functionalities of FIshPhyloMaker package
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# MS\_FishPhyloMaker
+
+Repository for manuscript that describes functionalities of
+FIshPhyloMaker package
 
 # Repository structure
-This repository contains the full data to reproduce the analysis and figures present in the manuscript "FishPhyloMaker: an R package to generate phylogenies for finned-ray fishes". 
 
-## Folders 
+This repository contains the full data to reproduce the analysis and
+figures present in the manuscript “FishPhyloMaker: an R package to
+generate phylogenies for finned-ray fishes”.
 
-- data: contains all data needed to perform the analysis
+## Folders
 
-- doc: .doc documents containing the manuscript describing the package
+  - data: contains all data needed to perform the analysis
 
-- output: contains all results, including figures and .rds files generated with archives contained in R folder that starts with letters D and S
+  - doc: .doc documents containing the manuscript describing the package
 
-- R: contains all .R scripts. Archives that starts with letter D (e.g. D_makingPhyloEcorregion_12-04-21.R) and S (e.g. S_PhylogeniesEcoregions.R) are designed to, respectivelly, run analysis and generate figures for the results of these analyses.
+  - output: contains all results, including figures and .rds files
+    generated with archives contained in R folder that starts with
+    letters D and S
+
+  - R: contains all .R scripts. Archives that starts with letter D
+    (e.g. D\_makingPhyloEcorregion\_12-04-21.R) and S
+    (e.g. S\_PhylogeniesEcoregions.R) are designed to, respectivelly,
+    run analysis and generate figures for the results of these analyses.
 
 # Downloading the repository
 
-The user can download this repo to a local folder in your computer or clone it:
+The user can download this repo to a local folder in your computer or
+clone it:
 
 ## downloading all files
 
-`download.file(url = "https://github.com/GabrielNakamura/MS_FishPhyloMaker/archive/master.zip", destfile = "MS_FishPhyloMaker.zip")`
+`download.file(url =
+"https://github.com/GabrielNakamura/MS_FishPhyloMaker/archive/main.zip",
+destfile = "MS_FishPhyloMaker.zip")`
 
 to unzip the .zip file in your computer type
 
 `unzip(zipfile = "MS_FishPhyloMaker.zip")`
-
