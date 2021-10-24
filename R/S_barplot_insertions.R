@@ -3,6 +3,8 @@
 
 phylo_complete <- readRDS(here::here("output", "phylo_all.rds"))
 insertions_all <- readRDS(here::here("output", "insertions_all.rds"))
+list_spp_perBasin <- readRDS(here::here("output", "list_spp_perBasin.rds"))
+
 library(ggtree)
 library(ggtreeExtra)
 library(ggnewscale)
@@ -72,8 +74,45 @@ barplot_insertion <- ggplot(data = data_basin_ecoregion, aes(x = Ecoregion, fill
                                      margin = margin(b = 6)
         )
   )
+barplot_insertion
 
-  
+perc.insertions <- data_basin_ecoregion %>% 
+  dplyr::group_by(Ecoregion) %>% 
+  dplyr::count(insertions)
+
+barplot_insertion_perc <- ggplot2::ggplot(data = perc.insertions, aes(y = n, x = Ecoregion)) +
+  # coord_flip() +
+  geom_bar(aes(fill = insertions), 
+           position = position_fill(reverse = TRUE),
+           stat = "identity") +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_viridis_d(option = "inferno", begin = 0.1, end = 0.8) +
+  labs(x = NULL, y = NULL) +
+  theme(legend.title=element_blank(),
+        axis.text.x = element_text(angle = 55, hjust = 1, size = 10)) + # Adjust label text
+  guides(fill = guide_legend(reverse = TRUE)) +
+  rcartocolor::scale_fill_carto_d(palette = "Safe", 
+                                  labels = c("Present",
+                                             "Congeneric",
+                                             "Family", 
+                                             "Congeneric Family",
+                                             "Order", 
+                                             "Not inserted")) +
+  labs(y = "Proportion of insertions", fill = "Type of insertion") +
+  theme(legend.position = "bottom", panel.background = element_rect(fill = "transparent"),
+        plot.margin = unit(c(0.4, 0.4, 0.4, 0.4), "mm"),
+        legend.title = element_text(family = "Times", color = "black", face = "bold", size = 12),
+        legend.text = element_text(family = "Times", color = "black", size = 12), 
+        axis.text = element_text(family = "Times", color = "black", size = 12), panel.border = element_blank(), axis.ticks = element_blank(),
+        plot.subtitle = element_text(family = "Arial", 
+                                     color = "black",
+                                     size = 9, 
+                                     hjust = 0.5, 
+                                     margin = margin(b = 6)
+        )
+  )
+barplot_insertion_perc
+
 # plotting tree -----------------------------------------------------------
 
 df_insertion <- insertions_all[- which(insertions_all$insertions == "Not_inserted"), ]
@@ -148,9 +187,11 @@ phylo <- ggtree::ggtree(phylo_complete, layout = "circular") +
 ggsave(filename = here::here("output", "images", "phylogeny_complete.png"), plot = phylo,
        width = 7, height = 8, 
        dpi = 500)
-ggsave(here::here("output", "images", "barplot_insertions.png"), plot = barplot_insertion,
+ggsave(here::here("output", "images", "barplot_insertions_perc.png"), plot = barplot_insertion_perc,
        width = 7, height = 7, dpi = 500)
 
+ggsave(here::here("output", "images", "barplot_insertions.png"), plot = barplot_insertion,
+       width = 7, height = 7, dpi = 500)
 
 
 
