@@ -193,6 +193,6 @@ parallel::stopCluster(parallel)
 
 saveRDS(object = res_01, file = here::here("output", "res_010_50runs.rds"))
 saveRDS(object = res_015, file = here::here("output", "res_015_50runs.rds"))
-saveRDS(object = res_020, file = here::here("output", "res_020_50runs.rds"))
+saveRDS(object = res_02, file = here::here("output", "res_020_50runs.rds"))
 saveRDS(object = res_025, file = here::here("output", "res_025_50runs.rds"))
 saveRDS(object = res_030, file = here::here("output", "res_030_50runs.rds"))
