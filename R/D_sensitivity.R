@@ -159,40 +159,77 @@ if (length(list_family_tobeaddnames) > 0) {
 
 n.cluster <- parallel::detectCores()
 parallel <- parallel::makeCluster(n.cluster, type = "PSOCK")
-res_01 <- parallel::parLapply(parallel, 1:50, fun = eval_PhyloMaker,
+res_010 <- parallel::parLapply(parallel, 1:100, fun = eval_PhyloMaker,
                     probs = 0.1, 
                     tree_complete = phylo_order,
                     insert.base.node = TRUE, 
                     return.insertions = TRUE, 
                     progress.bar = TRUE)
-res_015 <- parallel::parLapply(parallel, 1:50, fun = eval_PhyloMaker,
+res_015 <- parallel::parLapply(parallel, 1:100, fun = eval_PhyloMaker,
                               probs = 0.15, 
                               tree_complete = phylo_order,
                               insert.base.node = TRUE, 
                               return.insertions = TRUE, 
                               progress.bar = TRUE)
-res_02 <- parallel::parLapply(parallel, 1:50, fun = eval_PhyloMaker,
+res_020 <- parallel::parLapply(parallel, 1:100, fun = eval_PhyloMaker,
                               probs = 0.2, 
                               tree_complete = phylo_order,
                               insert.base.node = TRUE, 
                               return.insertions = TRUE, 
                               progress.bar = TRUE)
-res_025 <- parallel::parLapply(parallel, 1:50, fun = eval_PhyloMaker,
+res_025 <- parallel::parLapply(parallel, 1:100, fun = eval_PhyloMaker,
                               probs = 0.25, 
                               tree_complete = phylo_order,
                               insert.base.node = TRUE, 
                               return.insertions = TRUE, 
                               progress.bar = TRUE)
-res_03 <- parallel::parLapply(parallel, 1:50, fun = eval_PhyloMaker,
+res_030 <- parallel::parLapply(parallel, 1:100, fun = eval_PhyloMaker,
                               probs = 0.3, 
                               tree_complete = phylo_order,
                               insert.base.node = TRUE, 
                               return.insertions = TRUE, 
                               progress.bar = TRUE)
+res_040 <- parallel::parLapply(parallel, 1:100, fun = eval_PhyloMaker,
+                              probs = 0.4, 
+                              tree_complete = phylo_order,
+                              insert.base.node = TRUE, 
+                              return.insertions = TRUE, 
+                              progress.bar = TRUE)
+res_045 <- parallel::parLapply(parallel, 1:100, fun = eval_PhyloMaker,
+                              probs = 0.45, 
+                              tree_complete = phylo_order,
+                              insert.base.node = TRUE, 
+                              return.insertions = TRUE, 
+                              progress.bar = TRUE)
+res_050 <- parallel::parLapply(parallel, 1:100, fun = eval_PhyloMaker,
+                              probs = 0.3, 
+                              tree_complete = phylo_order,
+                              insert.base.node = TRUE, 
+                              return.insertions = TRUE, 
+                              progress.bar = TRUE)
+res_055 <- parallel::parLapply(parallel, 1:100, fun = eval_PhyloMaker,
+                              probs = 0.55, 
+                              tree_complete = phylo_order,
+                              insert.base.node = TRUE, 
+                              return.insertions = TRUE, 
+                              progress.bar = TRUE)
+res_060 <- parallel::parLapply(parallel, 1:100, fun = eval_PhyloMaker,
+                               probs = 0.60, 
+                               tree_complete = phylo_order,
+                               insert.base.node = TRUE, 
+                               return.insertions = TRUE, 
+                               progress.bar = TRUE)
+
 parallel::stopCluster(parallel)
 
-saveRDS(object = res_01, file = here::here("output", "res_010_50runs.rds"))
-saveRDS(object = res_015, file = here::here("output", "res_015_50runs.rds"))
-saveRDS(object = res_02, file = here::here("output", "res_020_50runs.rds"))
-saveRDS(object = res_025, file = here::here("output", "res_025_50runs.rds"))
-saveRDS(object = res_030, file = here::here("output", "res_030_50runs.rds"))
+saveRDS(object = res_010, file = here::here("output", "res_010_100runs.rds"))
+saveRDS(object = res_015, file = here::here("output", "res_015_100runs.rds"))
+saveRDS(object = res_020, file = here::here("output", "res_020_100runs.rds"))
+saveRDS(object = res_025, file = here::here("output", "res_025_100runs.rds"))
+saveRDS(object = res_030, file = here::here("output", "res_030_100runs.rds"))
+saveRDS(object = res_035, file = here::here("output", "res_035_100runs.rds"))
+saveRDS(object = res_040, file = here::here("output", "res_040_100runs.rds"))
+saveRDS(object = res_045, file = here::here("output", "res_045_100runs.rds"))
+saveRDS(object = res_050, file = here::here("output", "res_050_100runs.rds"))
+saveRDS(object = res_055, file = here::here("output", "res_055_100runs.rds"))
+saveRDS(object = res_060, file = here::here("output", "res_060_100runs.rds"))
