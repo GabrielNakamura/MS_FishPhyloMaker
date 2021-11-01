@@ -1,27 +1,28 @@
-# plotting sensitivty analysis
+# plotting sensitivity analysis
 
 
 # reading data ------------------------------------------------------------
 
 df_sensitivity <- readRDS(file = here::here("output", "df_sensitivity_cor.rds"))
 library(tidyverse)
-
+library(cowplot)
+library(ggforce)
 
 # plot --------------------------------------------------------------------
 
 
 theme_set(theme_bw())
-insertionPercentagelabx <- glue::glue("{seq(10, 25, by = 5)}")
+insertionPercentagelab <- glue::glue("{seq(10, 60, by = 5)}")
 
 distinctness <- ggplot(data = df_sensitivity, 
                        aes(x = percent_insert, y = cor_distinctness, fill = cor_distinctness)) +
   geom_boxplot() +
-  geom_jitter(color="gray", size=0.8, alpha=0.6) +
+  geom_jitter(color="gray", size=0.6, alpha=0.6) +
   scale_x_discrete(labels= insertionPercentagelab) +
   scale_y_continuous(name = "Correlation coefficient",
                      limits = c(0, 1)) +
   ggtitle("A") +
-  xlab("Percentage of inserted species") +
+  xlab("Percentage of inserted species (%)") +
   theme(legend.position = "", panel.background = element_rect(fill = "transparent"),
         axis.line = element_line(colour = "black", size = 0.8, linetype = "solid"),
         plot.margin = unit(c(0.4, 0.4, 0.4, 0.4), "mm"),
@@ -42,10 +43,9 @@ coph <- ggplot(data = df_sensitivity,
   geom_boxplot() +
   geom_jitter(color="gray", size=0.8, alpha=0.6) +
   scale_x_discrete(labels= insertionPercentagelab) +
-  scale_y_continuous(name = "Correlation coefficient",
-                     limits = c(0, 1)) +
+  xlab("Percentage of inserted species (%)") +
+  ylab("Correlation coefficient") +
   ggtitle("B") +
-  xlab("Percentage of inserted species") +
   theme(legend.position = "", panel.background = element_rect(fill = "transparent"),
         axis.line = element_line(colour = "black", size = 0.8, linetype = "solid"),
         plot.margin = unit(c(0.4, 0.4, 0.4, 0.4), "mm"),
@@ -58,11 +58,11 @@ coph <- ggplot(data = df_sensitivity,
                                      hjust = 0.5, 
                                      margin = margin(b = 6)
         )
-  )
+  ) + facet_zoom(ylim = c(0, 1))
 
-library(patchwork)
-sensitivity_plot <- distinctness|coph
+sensitivity_plot <- cowplot::plot_grid(distinctness, coph)
+
 
 ggsave(filename = here::here("output", "images", "sensitivity_plot.png"), plot = sensitivity_plot, 
-       width = 10, height = 7,
+       width = 15, height = 7,
        dpi = 500)

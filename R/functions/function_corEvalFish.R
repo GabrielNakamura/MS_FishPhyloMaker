@@ -36,10 +36,10 @@ correlation_eval <-
     cor_cophenetic <- cor(as.vector(cophenetic_original), as.vector(cophenetic_simul))
     correlations <- c(cor_distinctness, cor_cophenetic)
     names(correlations) <- c("cor_distinctness", "cor_cophenetic")
-    list_res <- vector(mode = "list", length = 4)
-    list_res$cophenetic_simuldist <- cophenetic_simul
-    list_res$cophenetic_obsdist <- cophenetic_original
-    list_res$distinctness <- distinctness_all
+    list_res <- vector(mode = "list")
+    #list_res$cophenetic_simuldist <- cophenetic_simul
+    #list_res$cophenetic_obsdist <- cophenetic_original
+    #list_res$distinctness <- distinctness_all
     list_res$correlation <- correlations
     return(list_res)
   }
