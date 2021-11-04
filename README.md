@@ -3,6 +3,8 @@
 
 # MS\_FishPhyloMaker
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5645156.svg)](https://doi.org/10.5281/zenodo.5645156)
+
 Repository for manuscript that describes functionalities of
 FIshPhyloMaker package
 
