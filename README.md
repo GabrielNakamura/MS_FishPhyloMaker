@@ -8,6 +8,11 @@
 Repository for manuscript that describes functionalities of
 FIshPhyloMaker package
 
+The paper is published in [Ecological
+Informatics](https://www.sciencedirect.com/journal/ecological-informatics)
+and can be accessed
+[here](https://www.sciencedirect.com/science/article/pii/S1574954121002727)
+
 # Repository structure
 
 This repository contains the full data to reproduce the analysis and

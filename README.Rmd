@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 
 Repository for manuscript that describes functionalities of FIshPhyloMaker package
 
+The paper is published in [Ecological Informatics](https://www.sciencedirect.com/journal/ecological-informatics) and can be accessed [here](https://www.sciencedirect.com/science/article/pii/S1574954121002727)
+
 # Repository structure
 This repository contains the full data to reproduce the analysis and figures present in the manuscript "FishPhyloMaker: an R package to generate phylogenies for finned-ray fishes". 
 
@@ -41,4 +43,5 @@ The user can download this repo to a local folder in your computer or clone it:
 to unzip the .zip file in your computer type
 
 `unzip(zipfile = "MS_FishPhyloMaker.zip")`
+
 
